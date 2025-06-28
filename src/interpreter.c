@@ -7,6 +7,7 @@
 
 int main(){
     const char filename[] = "C:/Users/bailk/Desktop/Programs/Github-Projects/C-Python-Mini/tester.txt";
+    //Read file
     char* file_contents = read_file(filename);
     if(!file_contents){
         perror("File Contents are Null");

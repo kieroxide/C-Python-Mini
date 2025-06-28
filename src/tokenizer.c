@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "tokenizer.h"
 
-
 TokenArr* tokenize(char* file_contents){
     TokenArr* t_arr = create_token_array();
 
