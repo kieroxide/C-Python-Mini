@@ -43,6 +43,38 @@ TokenArr* tokenize(char* file_contents){
                 return NULL; 
             }
         }
+        if(isdigit(c)){
+            int start = i;
+            char* slice = &file_contents[start];
+            while(i+1 < size && isdigit(file_contents[i+1])){
+                i++;
+            }
+            int length = i - start + 1;
+            char* substring = malloc(length + 1);
+            if(!substring){
+                perror("Failed to allocate substring memory");
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+            memcpy(substring, slice, length);
+            substring[length] = '\0';
+
+            Token* t = create_token(TOKEN_INT, substring);
+            if(!t){
+                perror("Failed to create token");
+                free(substring);
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+            free(substring);
+            t_arr = add_token_to_array(t_arr, t);
+            if(!t_arr){
+                perror("Failed to add token to token array");
+                free(substring);
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+        }
     }
     return t_arr;
 }
