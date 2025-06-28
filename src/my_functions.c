@@ -1,10 +1,7 @@
-#include <stdio.h>
+#include "my_functions.h"
 #include <stdlib.h>
 
-int fclose_safe(FILE* f);
-char* read_file(char* filename);
-
-char* read_file(char* filename){
+char* read_file(const char* filename){
     FILE* f = fopen(filename, "rb");
     if(!f){
         perror("Error opening file");
@@ -54,13 +51,3 @@ int fclose_safe(FILE* f){
     return 0;
 }
 
-int main(){
-    char* file_contents = read_file("C:/Users/bailk/Desktop/Programs/Github-Projects/C-Python-Mini/tester.txt");
-    if(!file_contents){
-        perror("Error while running read_file");
-        return -1;
-    }
-    printf("%s", file_contents);
-    free(file_contents);
-    return 0;
-}
