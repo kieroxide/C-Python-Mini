@@ -46,18 +46,21 @@ TokenArr* tokenize(char* file_contents){
     }
     return t_arr;
 }
+
 int is_newline(int c){
     if(c == '\n'){
         return 1;
     }
     return 0;
 }
+
 int is_operator(int c){
     if(c == '=' || c == '+' || c == '-'){
         return 1;
     }
     return 0;
 }
+
 TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i, int (*cond)(int), int token_type){
     int start = *i;
     char* slice = &file_contents[start];
@@ -92,7 +95,11 @@ TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i,
 void print_tokens(TokenArr* t_arr){
     for(int i = 0; i < t_arr->count; i++){
         printf("Token: %d, ", i);
-        printf("Token Value: %s, ", t_arr->tokens[i]->value);
+        char* val = t_arr->tokens[i]->value;
+        if(*val == '\n'){printf("Token Value: new_line, ", t_arr->tokens[i]->value);}
+        else{
+            printf("Token Value: %s, ", t_arr->tokens[i]->value);
+        }
         printf("Token Indentifier: %d\n", t_arr->tokens[i]->type);
     }
 }
