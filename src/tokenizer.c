@@ -10,71 +10,81 @@ TokenArr* tokenize(char* file_contents){
 
     long size = strlen(file_contents);
     for(long i = 0; i < size; i++){
-        char c = file_contents[i];
+        const char c = file_contents[i];
         if(isalpha(c)){
-            int start = i;
-            char* slice = &file_contents[start];
-            while(i+1 < size && isalpha(file_contents[i+1])){
-                i++;
-            }
-            int length = i - start + 1;
-            char* substring = malloc(length + 1);
-            if(!substring){
-                perror("Failed to allocate substring memory");
-                free_token_arr(t_arr);
-                return NULL; 
-            }
-            memcpy(substring, slice, length);
-            substring[length] = '\0';
-
-            Token* t = create_token(TOKEN_IDENTIFIER, substring);
-            if(!t){
-                perror("Failed to create token");
-                free(substring);
-                free_token_arr(t_arr);
-                return NULL; 
-            }
-            free(substring);
-            t_arr = add_token_to_array(t_arr, t);
+            t_arr = handle_token(t_arr, file_contents, size, &i, isalpha, TOKEN_IDENTIFIER);
             if(!t_arr){
-                perror("Failed to add token to token array");
-                free(substring);
+                perror("Failed to handle token");
                 free_token_arr(t_arr);
                 return NULL; 
             }
         }
         if(isdigit(c)){
-            int start = i;
-            char* slice = &file_contents[start];
-            while(i+1 < size && isdigit(file_contents[i+1])){
-                i++;
-            }
-            int length = i - start + 1;
-            char* substring = malloc(length + 1);
-            if(!substring){
-                perror("Failed to allocate substring memory");
-                free_token_arr(t_arr);
-                return NULL; 
-            }
-            memcpy(substring, slice, length);
-            substring[length] = '\0';
-
-            Token* t = create_token(TOKEN_INT, substring);
-            if(!t){
-                perror("Failed to create token");
-                free(substring);
-                free_token_arr(t_arr);
-                return NULL; 
-            }
-            free(substring);
-            t_arr = add_token_to_array(t_arr, t);
+            t_arr = handle_token(t_arr, file_contents, size, &i, isdigit, TOKEN_INT);
             if(!t_arr){
-                perror("Failed to add token to token array");
-                free(substring);
+                perror("Failed to handle token");
                 free_token_arr(t_arr);
                 return NULL; 
             }
         }
+        if(is_operator(c)){
+            t_arr = handle_token(t_arr, file_contents, size, &i, is_operator, TOKEN_INT);
+            if(!t_arr){
+                perror("Failed to handle token");
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+        }
+        if(is_newline(c)){
+            t_arr = handle_token(t_arr, file_contents, size, &i, is_operator, TOKEN_INT);
+            if(!t_arr){
+                perror("Failed to handle token");
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+        }
+    }
+    return t_arr;
+}
+int is_newline(int c){
+    if(c == '\n'){
+        return 1;
+    }
+    return 0;
+}
+int is_operator(int c){
+    if(c == '=' || c == '+' || c == '-'){
+        return 1;
+    }
+    return 0;
+}
+TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i, int (*cond)(int), int token_type){
+    int start = *i;
+    char* slice = &file_contents[start];
+    while((*i) + 1 < size && cond(file_contents[(*i)+1])){
+        (*i)++;
+    }
+    int length = (*i) - start + 1;
+    char* substring = malloc(length + 1);
+    if(!substring){
+        perror("Failed to allocate substring memory");
+        return NULL; 
+    }
+    memcpy(substring, slice, length);
+    substring[length] = '\0';
+
+    Token* t = create_token(token_type, substring);
+    if(!t){
+        perror("Failed to create token");
+        free(substring);
+        return NULL; 
+    }
+    free(substring);
+    t_arr = add_token_to_array(t_arr, t);
+    if(!t_arr){
+        perror("Failed to add token to token array");
+        free(substring);
+        return NULL; 
     }
     return t_arr;
 }

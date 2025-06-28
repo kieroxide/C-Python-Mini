@@ -4,9 +4,8 @@
 typedef enum {
     TOKEN_INT,        
     TOKEN_IDENTIFIER, 
-    TOKEN_PLUS,       
-    TOKEN_MINUS,
-    TOKEN_EQUALS       
+    TOKEN_OPERATOR,
+    TOKEN_NEWLINE      
 } TokenType;
 
 typedef struct {
@@ -22,11 +21,15 @@ typedef struct {
 
 
 TokenArr* tokenize(char* file_contents);
-Token* create_token(TokenType type, char* value);
+TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i, int (*cond)(int), int token_type);
 TokenArr* create_token_array();
 TokenArr* add_token_to_array(TokenArr* t_arr, Token* t);
+Token* create_token(TokenType type, char* value);
 void free_token(Token* t);
 void free_token_arr(TokenArr* t_arr);
 void print_tokens(TokenArr* t_arr);
+int is_operator(int c);
+int is_newline(int c);
+
 
 #endif
