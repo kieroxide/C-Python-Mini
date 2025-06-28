@@ -1,5 +1,5 @@
-#ifndef MYFUNCTIONS_H
-#define MYFUNCTIONS_H
+#ifndef read_file_h
+#define read_file_h
 
 #include <stdio.h> 
 

@@ -1,4 +1,4 @@
-#include "my_functions.h"
+#include "read_file.h"
 #include <stdlib.h>
 
 char* read_file(const char* filename){

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
-#include "tokenizer.h"
+#include "./tokenizer.h"
 
 TokenArr* tokenize(char* file_contents){
     TokenArr* t_arr = create_token_array();
@@ -27,7 +27,7 @@ TokenArr* tokenize(char* file_contents){
             }
         }
         if(is_operator(c)){
-            t_arr = handle_token(t_arr, file_contents, size, &i, is_operator, TOKEN_INT);
+            t_arr = handle_token(t_arr, file_contents, size, &i, is_operator, TOKEN_OPERATOR);
             if(!t_arr){
                 perror("Failed to handle token");
                 free_token_arr(t_arr);
@@ -35,7 +35,7 @@ TokenArr* tokenize(char* file_contents){
             }
         }
         if(is_newline(c)){
-            t_arr = handle_token(t_arr, file_contents, size, &i, is_operator, TOKEN_INT);
+            t_arr = handle_token(t_arr, file_contents, size, &i, is_newline, TOKEN_NEWLINE);
             if(!t_arr){
                 perror("Failed to handle token");
                 free_token_arr(t_arr);
@@ -75,6 +75,7 @@ TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i,
     memcpy(substring, slice, length);
     substring[length] = '\0';
 
+    if(strcmp(substring, "print")){ token_type = TOKEN_PRINT;}
     Token* t = create_token(token_type, substring);
     if(!t){
         perror("Failed to create token");
@@ -95,7 +96,7 @@ void print_tokens(TokenArr* t_arr){
     for(int i = 0; i < t_arr->count; i++){
         printf("Token: %d, ", i);
         char* val = t_arr->tokens[i]->value;
-        if(*val == '\n'){printf("Token Value: new_line, ", t_arr->tokens[i]->value);}
+        if(*val == '\n'){printf("Token Value: new_line, ");}
         else{
             printf("Token Value: %s, ", t_arr->tokens[i]->value);
         }

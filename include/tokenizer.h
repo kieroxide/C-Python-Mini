@@ -5,7 +5,8 @@ typedef enum {
     TOKEN_INT,        
     TOKEN_IDENTIFIER, 
     TOKEN_OPERATOR,
-    TOKEN_NEWLINE      
+    TOKEN_NEWLINE,
+    TOKEN_PRINT      
 } TokenType;
 
 typedef struct {
