@@ -1,34 +1,71 @@
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdio.h>
+#include "tokenizer.h"
 
-typedef enum {
-    TOKEN_INT,        
-    TOKEN_IDENTIFIER, 
-    TOKEN_PLUS,       
-    TOKEN_MINUS       
-} TokenType;
 
-typedef struct {
-    TokenType type;
-    char* value;    
-} Token;
-
-typedef struct {
-    Token** tokens;
-    int count;    
-    int capacity;
-} TokenArr;
-
-Token* create_token(TokenType type, char* value);
-
-Token** tokenize(char* file_contents){
+TokenArr* tokenize(char* file_contents){
     TokenArr* t_arr = create_token_array();
 
     long size = strlen(file_contents);
     for(long i = 0; i < size; i++){
         char c = file_contents[i];
+        if(isalpha(c)){
+            int start = i;
+            char* slice = &file_contents[start];
+            while(i+1 < size && isalpha(file_contents[i+1])){
+                i++;
+            }
+            int length = i - start + 1;
+            char* substring = malloc(length + 1);
+            if(!substring){
+                perror("Failed to allocate substring memory");
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+            memcpy(substring, slice, length);
+            substring[length] = '\0';
 
+            Token* t = create_token(TOKEN_IDENTIFIER, substring);
+            if(!t){
+                perror("Failed to create token");
+                free(substring);
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+            free(substring);
+            t_arr = add_token_to_array(t_arr, t);
+            if(!t_arr){
+                perror("Failed to add token to token array");
+                free(substring);
+                free_token_arr(t_arr);
+                return NULL; 
+            }
+        }
     }
+    return t_arr;
+}
+
+void print_tokens(TokenArr* t_arr){
+    for(int i = 0; i < t_arr->count; i++){
+        printf("Token: %d, ", i);
+        printf("Token Value: %s, ", t_arr->tokens[i]->value);
+        printf("Token Indentifier: %d\n", t_arr->tokens[i]->type);
+    }
+}
+
+void free_token_arr(TokenArr* t_arr){
+    for(int i = 0; i < t_arr->count; i++){
+        free_token(t_arr->tokens[i]);
+    }
+    free(t_arr->tokens);
+    free(t_arr);
+}
+
+void free_token(Token* t){
+    free(t->value);
+    free(t);
 }
 
 TokenArr* add_token_to_array(TokenArr* t_arr, Token* t){

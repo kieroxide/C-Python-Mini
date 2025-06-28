@@ -1,4 +1,5 @@
 #include "my_functions.h"
+#include "tokenizer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,9 @@ int main(){
         return -1;
     }
     // Tokenize
-    
+    TokenArr* t_arr = tokenize(file_contents);
+    print_tokens(t_arr);
+    free_token_arr(t_arr);
     //printf("%s",file_contents);
     free(file_contents);
     return 0;
