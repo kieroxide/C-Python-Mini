@@ -1,5 +1,6 @@
 #include "read_file.h"
 #include "tokenizer.h"
+#include "AST.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +16,8 @@ int main(){
     }
     // Tokenize
     TokenArr* t_arr = tokenize(file_contents);
+    AST_Node* program = parser(t_arr);
+    free(program);
     free(file_contents);
     print_tokens(t_arr);
     free_token_arr(t_arr);

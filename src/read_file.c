@@ -30,8 +30,8 @@ char* read_file(const char* filename){
         fclose_safe(f);
         return NULL;
     }
-    
-    if(fread(file_contents, sizeof(char), size, f) != size){
+    unsigned long sizeU = size;
+    if(fread(file_contents, sizeof(char), size, f) != sizeU){
         perror("Error with fread() returned wrong amount");
         free(file_contents);
         fclose_safe(f);

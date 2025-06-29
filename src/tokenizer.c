@@ -75,7 +75,7 @@ TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i,
     memcpy(substring, slice, length);
     substring[length] = '\0';
 
-    if(strcmp(substring, "print")){ token_type = TOKEN_PRINT;}
+    if(strcmp(substring, "print") == 0){ token_type = TOKEN_PRINT;}
     Token* t = create_token(token_type, substring);
     if(!t){
         perror("Failed to create token");
