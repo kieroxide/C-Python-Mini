@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#ifdef _WIN32
+#include <malloc.h>  // THIS is where _strdup is declared
+#define strdup _strdup
+#endif
 
 AST_Node* parser(TokenArr* t_arr){
     //Loops through all tokens
@@ -43,6 +46,7 @@ AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i){
             //Take identifier and its values store as node check for operator equals
             //
             AST_Node* var = create_node(NODE_ASSIGN);
+            AST_Node* val = create_node(NODE_INT);
             var->var_name = strdup(t->value);
             (*i)++;
             Token* target = tokens[*i];
@@ -50,7 +54,7 @@ AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i){
                 perror("Invalid Identifier Operation");
                 return NULL;
             }
-            if(strcmp(target->value, "=")){
+            if(strcmp(target->value, "=") != 0){
                 perror("Invalid Identifier Operation");
                 return NULL;
             }
@@ -61,7 +65,8 @@ AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i){
                 perror("Invalid Assignment");
                 return NULL;
             }
-            var->int_value = atoi(target->value);
+            val->int_value = atoi(target->value);
+            var->right = val;
             add_to_statement_arr(program, var);
         }
         (*i)++;
@@ -114,4 +119,27 @@ AST_Node* add_to_statement_arr(AST_Node* program, AST_Node* node){
     program->statements[program->statement_count] = node;
     program->statement_count++;
     return program;
+}
+
+void free_ast(AST_Node* head){
+    if(head->left){
+        free_ast(head->left);
+    }
+    if(head->right){
+        free_ast(head->right);
+    }
+    if(head->expr){
+        free_ast(head->expr);
+    }
+    if(head->statements){
+        free_statements(head);
+    }
+    free(head);
+}
+
+void free_statements(AST_Node* head){
+    for(int i = 0; i < head->statement_count; i++){
+        AST_Node* current = head->statements[i];
+        free_ast(current);
+    }
 }

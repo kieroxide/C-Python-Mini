@@ -1,6 +1,8 @@
 #ifndef tokenizer_h
 #define tokenizer_h
 
+
+
 typedef enum {
     TOKEN_INT,        
     TOKEN_IDENTIFIER, 

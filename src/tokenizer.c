@@ -3,6 +3,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "./tokenizer.h"
+#ifdef _WIN32
+#include <malloc.h>  
+#define strdup _strdup
+#endif
 
 TokenArr* tokenize(char* file_contents){
     TokenArr* t_arr = create_token_array();

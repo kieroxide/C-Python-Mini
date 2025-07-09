@@ -33,5 +33,7 @@ AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i);
 AST_Node* create_node(NodeType type);
 AST_Node* init_statement_arr(AST_Node* program);
 AST_Node* add_to_statement_arr(AST_Node* program, AST_Node* node);
+void free_statements(AST_Node* head);
+void free_ast(AST_Node* head);
 
 #endif
