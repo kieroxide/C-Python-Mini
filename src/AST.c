@@ -8,20 +8,9 @@
 #define strdup _strdup
 #endif
 
-AST_Node* parser(TokenArr* t_arr){
-    //Loops through all tokens
-    AST_Node* program = create_node(NODE_PROGRAM);
-    program = init_statement_arr(program);
-    if(!program) return NULL;
-    for(int i = 0; i < t_arr->count; i++){
-        program = parse_statement(t_arr, program ,&i );
-    }
-    return program;
-}
-
 AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i){
     Token** tokens = t_arr->tokens;
-    while(*i < t_arr->count && tokens[*i]->type != TOKEN_NEWLINE){
+    while(*i < t_arr->count){
         Token* t = tokens[*i];
         if(t->type == TOKEN_PRINT){
             //If print token, check next token, if its identifier create and store
@@ -61,6 +50,7 @@ AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i){
             var->operator = '=';
             (*i)++;
             target = tokens[*i];
+            if(target->type == TOKEN_IDENTIFIER)
             if(target->type != TOKEN_INT){
                 perror("Invalid Assignment");
                 return NULL;
@@ -70,6 +60,7 @@ AST_Node* parse_statement(TokenArr* t_arr,AST_Node* program, int* i){
             add_to_statement_arr(program, var);
         }
         (*i)++;
+        
     }
     return program;
 }
@@ -122,6 +113,8 @@ AST_Node* add_to_statement_arr(AST_Node* program, AST_Node* node){
 }
 
 void free_ast(AST_Node* head){
+    if(!head) return;
+
     if(head->left){
         free_ast(head->left);
     }
@@ -133,6 +126,9 @@ void free_ast(AST_Node* head){
     }
     if(head->statements){
         free_statements(head);
+    }
+    if(head->var_name){
+        free(head->var_name);
     }
     free(head);
 }

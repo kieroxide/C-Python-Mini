@@ -37,15 +37,32 @@ int main(){
         return -1;
     }
 
-    TokenArr* t_arr = tokenize(file_contents);
-    AST_Node* program = parser(t_arr);
-    eval_ast(program);
+    long size = strlen(file_contents);
+    int line_start = 0;
+    char c;
+    while(c != '\0'){
+        c = file_contents[line_start];
+        int line_size = 0;
+        while(c != '\n' && c != '\0'){
+            line_size++;
+            c = file_contents[line_size + line_start];
+        }
+        int line_end = line_start + line_size;
+        TokenArr* t_arr = tokenize_line(file_contents, line_start, line_end);
+        print_tokens(t_arr);
+        free_token_arr(t_arr);
 
-    //print_tokens(t_arr);
 
-    free_ast(program);
+
+        line_start = line_end + 1;
+    }
+
+    //AST_Node* program = parser(t_arr);
+    //eval_ast(program);
+
+
+    //free_ast(program);
     free(file_contents);
-    free_token_arr(t_arr);
     return 0;
 }
 
@@ -79,7 +96,7 @@ void eval_ast(AST_Node* program){
                 variables = temp_variables;
                 break;
             }
-            if(current->type == NODE_PRINT){
+            else if(current->type == NODE_PRINT){
                 if(!current->right){
                     break;
                 }
@@ -96,6 +113,16 @@ void eval_ast(AST_Node* program){
                 }
                 printf("%s : %d \n", next->var_name, value);
                 break;
+            }
+            else if(current->type == NODE_OPERATION){
+                char operator = current->operator;
+                char leftVal = current->left->int_value;
+                char rightVal = current->right->int_value;
+                int result;
+                if(operator == '+') {result = leftVal + rightVal;}
+                if(operator == '-') {result = leftVal - rightVal;}
+                if(operator == '*') {result = leftVal * rightVal;}
+                if(operator == '/') {result = leftVal / rightVal;}
             }
             current = current->right;
         }

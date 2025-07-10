@@ -8,11 +8,11 @@
 #define strdup _strdup
 #endif
 
-TokenArr* tokenize(char* file_contents){
+TokenArr* tokenize_line(char* file_contents, int start, int end){
     TokenArr* t_arr = create_token_array();
-
     long size = strlen(file_contents);
-    for(long i = 0; i < size; i++){
+    int i = start;
+    while (i != end){
         const char c = file_contents[i];
         if(isalpha(c)){
             t_arr = handle_token(t_arr, file_contents, size, &i, isalpha, TOKEN_IDENTIFIER);
@@ -39,13 +39,9 @@ TokenArr* tokenize(char* file_contents){
             }
         }
         if(is_newline(c)){
-            t_arr = handle_token(t_arr, file_contents, size, &i, is_newline, TOKEN_NEWLINE);
-            if(!t_arr){
-                perror("Failed to handle token");
-                free_token_arr(t_arr);
-                return NULL; 
-            }
+            break;
         }
+        i++;
     }
     return t_arr;
 }

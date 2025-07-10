@@ -23,7 +23,7 @@ typedef struct {
 } TokenArr;
 
 
-TokenArr* tokenize(char* file_contents);
+TokenArr* tokenize_line(char* file_contents, int start, int end);
 TokenArr* handle_token(TokenArr* t_arr, char* file_contents, long size, long* i, int (*cond)(int), int token_type);
 TokenArr* create_token_array();
 TokenArr* add_token_to_array(TokenArr* t_arr, Token* t);
